@@ -28,6 +28,9 @@ class AnalysisRunner
 	S_IntermodularCalls *_Calls;
 	ApiDB *mDb;
 
+	unsigned char* EIPdata;
+	UIntPtr currentEIP;
+	UInt64 currentVirtualAddr;
 
 public:
 
@@ -46,5 +49,6 @@ public:
 	void clear( );
 	void think( );
 	void initialise();
+	unsigned int getInstruction(const duint bytesOffset, DISASM* disasm );
 };
 

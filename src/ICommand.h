@@ -19,6 +19,7 @@ protected:
 	duint mBase;
 	duint mSize;
 	AnalysisRunner *mParent;
+	unsigned int getInstruction(const duint bytesOffset, DISASM* disasm );
 
 public:
 

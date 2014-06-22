@@ -6,6 +6,9 @@
 #include "AnalysisRunner.h"
 #include "meta.h"
 
+/*#define _isPush(disasm)  (QString(disasm->Instruction.Mnemonic).trimmed().toLower() == "push")
+#define _isCall(disasm)  ((disasm->Instruction.BranchType == CallType)  && !(disasm->Argument1.ArgType &REGISTER_TYPE))))*/
+
 #define _isPush(disasm)  ((strcmp(disasm->Instruction.Mnemonic ,"push ") == 0) )
 #define _isCall(disasm)  ((disasm->Instruction.Opcode == 0xE8) && (disasm->Instruction.BranchType) && (disasm->Instruction.BranchType!=RetType) && !(disasm->Argument1.ArgType &REGISTER_TYPE))
 
@@ -33,24 +36,60 @@ void S_IntermodularCalls::see(const  DISASM* disasm )
 		{
 			// no part of api-call
 			mCurrent.clear();
-			//_plugin_logprintf("[StaticAnalysis:IntermodularCalls] found 0xFF : %x and mne (%s)\n", disasm->Instruction.Opcode,disasm->Instruction.Mnemonic);
-			char labelText[MAX_LABEL_SIZE];
-			bool hasLabel = DbgGetLabelAt(disasm->Argument1.Memory.Displacement, SEG_DEFAULT, labelText);
-
-			if(hasLabel){
-				// api calls have 0xFF-jumps as target addresses, we need to remember them
-				_JumpFF j;
-				j.RVA = disasm->VirtualAddr;
-				j.RelativeAddressValue = disasm->Argument1.Memory.Displacement;
-				strcpy(j.label,labelText);
-				mApiJumps.insert(j);
-			}
+			
 		}else {
 			if(_isCall(disasm))
 			{
 				// set missing informations
 				mCurrent.RVA = disasm->VirtualAddr ;
 				mCurrent.RelativeAddressValue = disasm->Instruction.AddrValue ;
+
+
+				// retrieve label from the instratuction at "addrValue"
+				DISASM target_instr;
+				int len = getInstruction(disasm->Instruction.AddrValue-disasm->VirtualAddr,&target_instr);
+
+				if(len != UNKNOWN_OPCODE){
+					// it is a jump to a dll
+					if(target_instr.Instruction.Opcode == 0xFF){
+						mCurrent.isApiCall = true;
+						// prepare gathering labelText
+						char labelText[MAX_LABEL_SIZE];
+						bool hasLabel = DbgGetLabelAt(target_instr.Argument1.Memory.Displacement, SEG_DEFAULT, labelText);
+						if(hasLabel){
+							// we have a label from TitanEngine --> look up function header in database
+							APIFunction f; 
+							f = mParent->db()->find(labelText);
+							if(!f.invalid){
+								// found!
+								// yeah we know everything about the api-call!
+								std::string functionComment;
+								functionComment = f.ReturnType + " " + f.Name + "(...)";
+								DbgSetCommentAt(disasm->VirtualAddr ,functionComment.c_str());
+								int pos=0;
+								// set comments for the arguments
+								if( (f.Arguments.size() > 0)  && (mCurrent.arguments.size() > 0) ){
+									for(std::list<duint>::reverse_iterator a= mCurrent.arguments.rbegin();a!=mCurrent.arguments.rend();a++)
+									{
+										// more push" instructions than arguments
+										if(pos >=f.Arguments.size())
+											break;
+
+										std::string ArgComment = f.arg(pos).Type + " "+ f.arg(pos).Name;
+										DbgSetCommentAt((*a) ,ArgComment.c_str());
+										pos++;
+									}
+								}
+
+							}
+
+						}
+
+					}
+
+				}
+				
+
 				// copy structure
 				_Call t = mCurrent;
 				mCalls.push_back(t);
@@ -75,37 +114,8 @@ bool S_IntermodularCalls::think()
 	// iterate all calls
 	for (std::list<_Call>::iterator c = mCalls.begin();c != mCalls.end();c++)
 	{
-		bool is_api = false;
-		_JumpFF findJump; 
-		findJump.RVA = c->RelativeAddressValue;
-		std::set<_JumpFF>::iterator j = mApiJumps.find(findJump);
-		if(j != mApiJumps.end()){
-			// having a label we can look in our database to get the arguments list
-			APIFunction f; 
-			f = mParent->db()->find(j->label);
-			if(!f.invalid){
-				// yeah we know everything about the api-call!
-				std::string functionComment;
-				functionComment = f.ReturnType + " " + f.Name + "(...)";
-				DbgSetCommentAt(c->RVA ,functionComment.c_str());
-				int pos=0;
-				// set comments for the arguments
-				if( (f.Arguments.size() > 0)  && (c->arguments.size() > 0) ){
-					for(std::list<duint>::reverse_iterator a= c->arguments.rbegin();a!=c->arguments.rend();a++)
-					{
-						// more push" instructions than arguments
-						if(pos >=f.Arguments.size())
-							break;
-
-						std::string ArgComment = f.arg(pos).Type + " "+ f.arg(pos).Name;
-						DbgSetCommentAt((*a) ,ArgComment.c_str());
-						pos++;
-					}
-				}
-			}
-			is_api = true;
+		if(c->isApiCall)
 			numberOfApiCalls++;
-		}
 	}
 
 	_plugin_logprintf("[StaticAnalysis:IntermodularCalls] of which are %i intermodular calls\n", numberOfApiCalls);

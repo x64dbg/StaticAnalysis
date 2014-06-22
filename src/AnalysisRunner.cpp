@@ -35,10 +35,32 @@ void AnalysisRunner::start(){
 	_plugin_logputs("[StaticAnalysis] analysis finished ...");
 }
 
+unsigned int AnalysisRunner::getInstruction(const duint bytesOffset,DISASM* disasm ){
+
+
+	memset(&disasm, 0, sizeof(disasm));
+
+	if(currentEIP + bytesOffset > mSize)
+		return UNKNOWN_OPCODE;
+
+	duint baseaddr = mBaseAddress;
+	duint size = mSize;
+
+
+#ifdef _WIN64
+	disasm.Archi=64;
+#endif // _WIN64
+	disasm->EIP=currentEIP + bytesOffset;
+	disasm->VirtualAddr=currentVirtualAddr + bytesOffset;
+
+	return (int) Disasm(disasm);
+
+}
+
 void AnalysisRunner::run()
 {
-	unsigned char* data = new unsigned char[mSize];
-	if(!DbgMemRead(mBaseAddress, data, mSize))
+	EIPdata = new unsigned char[mSize];
+	if(!DbgMemRead(mBaseAddress, EIPdata, mSize))
 	{
 		//ERROR
 		_plugin_logputs("[StaticAnalysis] could not read memory ...");
@@ -55,24 +77,30 @@ void AnalysisRunner::run()
 #ifdef _WIN64
 	disasm.Archi=64;
 #endif // _WIN64
-	disasm.EIP=(UIntPtr)data;
-	disasm.VirtualAddr=(UInt64)baseaddr;
+	currentEIP = (UIntPtr)EIPdata;
+	disasm.EIP=currentEIP;
+	currentVirtualAddr = (UInt64)baseaddr;
+	disasm.VirtualAddr=currentVirtualAddr;
 	duint i=0;
 	while(i<size)
 	{
 		int len=Disasm(&disasm);
 		if(len!=UNKNOWN_OPCODE)
 		{
+			emulateStack(&disasm);
 			see(&disasm);
 		}
 		else{
 			unknownOpCode(&disasm);
 			len=1;
 		}
-		disasm.EIP+=len;
-		disasm.VirtualAddr+=len;
+		currentEIP += len;
+		currentVirtualAddr += len;
+		disasm.EIP=currentEIP;
+		disasm.VirtualAddr=currentVirtualAddr;
 		i+=len;
 	}
+	delete EIPdata;
 }
 void AnalysisRunner::clear(  )
 {
@@ -105,4 +133,20 @@ void AnalysisRunner::initialise()
 void AnalysisRunner::setDB( ApiDB *api )
 {
 	mDb = api;
+}
+
+void AnalysisRunner::emulateStack( DISASM* disasm )
+{
+	/* track all events:
+	   - sub/add esp
+	   - mov [esp+x], ???
+	   - push/pop
+	   - ret
+	*/
+
+	if ((disasm->Argument1.AccessMode == WRITE)
+		&& (disasm->Argument1.ArgType & MEMORY_TYPE)
+		&& (disasm->Argument1.Memory.BaseRegister & REG4))  {
+
+	}
 }

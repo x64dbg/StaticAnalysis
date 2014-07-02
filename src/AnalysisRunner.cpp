@@ -35,6 +35,10 @@ void AnalysisRunner::start(){
 	_plugin_logputs("[StaticAnalysis] analysis finished ...");
 }
 
+const duint AnalysisRunner::baseAddress() const{
+	return mBaseAddress;
+}
+
 void AnalysisRunner::run()
 {
 	unsigned char* data = new unsigned char[mSize];

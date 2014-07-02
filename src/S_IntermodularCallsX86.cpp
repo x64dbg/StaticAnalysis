@@ -88,6 +88,7 @@ bool S_IntermodularCalls::think()
 				std::string functionComment;
 				functionComment = f.ReturnType + " " + f.Name + "(...)";
 				DbgSetCommentAt(c->RVA ,functionComment.c_str());
+				//_plugin_logprintf("[StaticAnalysis:IntermodularCalls] found %s at %X\n",functionComment , c->RVA);
 				int pos=0;
 				// set comments for the arguments
 				if( (f.Arguments.size() > 0)  && (c->arguments.size() > 0) ){

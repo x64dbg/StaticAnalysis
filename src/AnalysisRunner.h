@@ -46,5 +46,6 @@ public:
 	void clear( );
 	void think( );
 	void initialise();
+	const duint baseAddress() const;
 };
 

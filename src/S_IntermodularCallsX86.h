@@ -44,7 +44,7 @@ class S_IntermodularCalls : public ICommand
 		}
 		bool operator<(const _JumpFF& rhs) const
 		{
-			return RVA < rhs.RVA;
+			return (RVA < rhs.RVA);
 		}
 	};
 

@@ -86,10 +86,12 @@ ApiDB::~ApiDB(void)
 
 APIFunction ApiDB::find( std::string name )
 {
+	if(name[0]=='&')
+		name.erase (0,1); 
 	APIFunction f;
 	f.invalid = true;
 	
-
+	_plugin_logprintf("[StaticAnalysis:IntermodularCalls] search data %s \n",name.c_str() );
 	std::list<APIFunction>::iterator it = mInfo.begin();
 
 	while(it!=mInfo.end()){

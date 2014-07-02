@@ -26,7 +26,7 @@ AnalysisRunner::~AnalysisRunner(void)
 }
 
 void AnalysisRunner::start(){
-	if(!mDb->ok())
+	if(!mApiDb->ok())
 		return;
 	_plugin_logputs("[StaticAnalysis] analysis started ...");
 	clear();
@@ -35,32 +35,32 @@ void AnalysisRunner::start(){
 	_plugin_logputs("[StaticAnalysis] analysis finished ...");
 }
 
-unsigned int AnalysisRunner::getInstruction(const duint bytesOffset,DISASM* disasm ){
-
-
+unsigned int AnalysisRunner::disassembleInstruction(const duint bytesOffset,DISASM* disasm ){
+	// prepare struct
 	memset(&disasm, 0, sizeof(disasm));
-
+	// test range
 	if(currentEIP + bytesOffset > mSize)
 		return UNKNOWN_OPCODE;
-
+	// backup values
 	duint baseaddr = mBaseAddress;
 	duint size = mSize;
-
 
 #ifdef _WIN64
 	disasm.Archi=64;
 #endif // _WIN64
+
+	// prepare values in struct
 	disasm->EIP=currentEIP + bytesOffset;
 	disasm->VirtualAddr=currentVirtualAddr + bytesOffset;
-
+	
 	return (int) Disasm(disasm);
-
 }
 
 void AnalysisRunner::run()
 {
-	EIPdata = new unsigned char[mSize];
-	if(!DbgMemRead(mBaseAddress, EIPdata, mSize))
+	
+	mCodeMemory = new unsigned char[mSize];
+	if(!DbgMemRead(mBaseAddress, mCodeMemory, mSize))
 	{
 		//ERROR
 		_plugin_logputs("[StaticAnalysis] could not read memory ...");
@@ -77,7 +77,7 @@ void AnalysisRunner::run()
 #ifdef _WIN64
 	disasm.Archi=64;
 #endif // _WIN64
-	currentEIP = (UIntPtr)EIPdata;
+	currentEIP = (UIntPtr)mCodeMemory;
 	disasm.EIP=currentEIP;
 	currentVirtualAddr = (UInt64)baseaddr;
 	disasm.VirtualAddr=currentVirtualAddr;
@@ -89,6 +89,7 @@ void AnalysisRunner::run()
 		{
 			emulateStack(&disasm);
 			see(&disasm);
+			backup(&disasm,len);
 		}
 		else{
 			unknownOpCode(&disasm);
@@ -100,7 +101,7 @@ void AnalysisRunner::run()
 		disasm.VirtualAddr=currentVirtualAddr;
 		i+=len;
 	}
-	delete EIPdata;
+	delete mCodeMemory;
 }
 void AnalysisRunner::clear(  )
 {
@@ -122,7 +123,7 @@ void AnalysisRunner::unknownOpCode( const DISASM *disasm )
 
 ApiDB* AnalysisRunner::db()
 {
-	return mDb;
+	return mApiDb;
 }
 
 void AnalysisRunner::initialise()
@@ -132,7 +133,7 @@ void AnalysisRunner::initialise()
 
 void AnalysisRunner::setDB( ApiDB *api )
 {
-	mDb = api;
+	mApiDb = api;
 }
 
 void AnalysisRunner::emulateStack( DISASM* disasm )
@@ -143,10 +144,30 @@ void AnalysisRunner::emulateStack( DISASM* disasm )
 	   - push/pop
 	   - ret
 	*/
-
+	// 
 	if ((disasm->Argument1.AccessMode == WRITE)
 		&& (disasm->Argument1.ArgType & MEMORY_TYPE)
-		&& (disasm->Argument1.Memory.BaseRegister & REG4))  {
+		&& (disasm->Argument1.Memory.BaseRegister & REG4)
+		&& (disasm->Argument1.SegmentReg & SSReg )
+		)  {
+			int offset = disasm->Argument1.Memory.Displacement;
+			duint addr = disasm->VirtualAddr;
 
+	}
+}
+
+// remember instructions in buffer for further analysis
+void AnalysisRunner::backup( DISASM* disasm , unsigned int len)
+{
+	mInstructionsBuffer.insert(std::pair<UInt64,DISASM>(disasm->VirtualAddr,Instruction_t(*disasm,len)));
+}
+
+// return instruction of address - if possible
+int AnalysisRunner::instruction(UInt64 va, Instruction_t* instr) const{
+	if(std::contains(mInstructionsBuffer,va)){
+		*instr = mInstructionsBuffer.at(va);
+		return instr->Length;
+	}else{
+		return UNKNOWN_OPCODE;
 	}
 }

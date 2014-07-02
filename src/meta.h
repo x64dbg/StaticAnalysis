@@ -7,33 +7,44 @@
 #include "pluginsdk/bridgemain.h"
 #include <vector>
 #include <string>
+#include <map>
 
-struct APIArgument
+struct Instruction_t{
+	DISASM Instruction;
+	unsigned int Length;
+
+	Instruction_t(DISASM *dis,unsigned int len){
+		Instruction = *dis;
+		Length = len;
+	}
+};
+
+struct ArgumentInfo_t
 {
 	std::string Type;
 	std::string Name;
 
-	APIArgument(std::string t,std::string n){
+	ArgumentInfo_t(std::string t,std::string n){
 		Type=t;
 		Name = n;
 	}
 
-	APIArgument(){}
+	ArgumentInfo_t(){}
 };
 
-struct APIFunction
+struct FunctionInfo_t
 {
 	std::string DLLName;
 	std::string ReturnType;
 	std::string Name;
-	std::vector<APIArgument> Arguments;
+	std::vector<ArgumentInfo_t> Arguments;
 	bool invalid;
 
-	APIFunction(){
+	FunctionInfo_t(){
 		invalid=false;
 	}
 
-	APIFunction(std::string dll,std::string ret,std::string name, std::vector<APIArgument> args){
+	FunctionInfo_t(std::string dll,std::string ret,std::string name, std::vector<ArgumentInfo_t> args){
 		DLLName=dll;
 		ReturnType=ret;
 		Name=name;
@@ -41,8 +52,27 @@ struct APIFunction
 		invalid = false;
 	}
 
-	APIArgument arg(int i){
+	bool operator==(const FunctionInfo_t& rhs) const
+	{
+		return stricmp(Name.c_str(), rhs.Name.c_str()) < 0;
+	}
+	bool operator<(const FunctionInfo_t& rhs) const
+	{
+		return stricmp(Name.c_str(), rhs.Name.c_str());
+	}
+
+	ArgumentInfo_t arg(int i){
 		return Arguments.at(i);
 	}
 
 };
+
+namespace std{
+
+	template<typename T, typename D>
+	bool contains(map<T,D> s, T key)
+	{
+		std::map<T,D>::iterator it = s.find(key);
+		return (it != s.end());
+	}
+}

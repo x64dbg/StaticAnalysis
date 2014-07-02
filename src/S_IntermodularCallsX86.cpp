@@ -58,7 +58,7 @@ void S_IntermodularCalls::see(const  DISASM* disasm )
 						bool hasLabel = DbgGetLabelAt(target_instr.Argument1.Memory.Displacement, SEG_DEFAULT, labelText);
 						if(hasLabel){
 							// we have a label from TitanEngine --> look up function header in database
-							APIFunction f; 
+							FunctionInfo_t f; 
 							f = mParent->db()->find(labelText);
 							if(!f.invalid){
 								// found!

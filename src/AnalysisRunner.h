@@ -4,12 +4,9 @@
  */
 #pragma once
 #include "pluginsdk/bridgemain.h"
-/* plugin:   (StaticAnalysis) for x64dbg <http://www.x64dbg.com>
- * author:   tr4ceflow@gmail.com <http://blog.traceflow.com>
- * license:  GLPv3
- */
 #include "pluginmain.h"
 #include "pluginsdk/BeaEngine.h"
+
 
 #ifdef _WIN64
 throw std::exception("The method or operation is not implemented.");
@@ -22,13 +19,14 @@ throw std::exception("The method or operation is not implemented.");
 
 class AnalysisRunner
 {
+	std::map<UInt64,Instruction_t> mInstructionsBuffer;
 	duint mBaseAddress;
 	duint mSize;
 
 	S_IntermodularCalls *_Calls;
-	ApiDB *mDb;
+	ApiDB *mApiDb;
 
-	unsigned char* EIPdata;
+	unsigned char* mCodeMemory;
 	UIntPtr currentEIP;
 	UInt64 currentVirtualAddr;
 
@@ -49,6 +47,10 @@ public:
 	void clear( );
 	void think( );
 	void initialise();
-	unsigned int getInstruction(const duint bytesOffset, DISASM* disasm );
+	unsigned int disassembleInstruction(const duint bytesOffset, DISASM* disasm );
+	void emulateStack( DISASM* disasm );
+	void backup( DISASM* disasm, unsigned int len );
+	int instruction(UInt64 va, Instruction_t* instr) const
+
 };
 

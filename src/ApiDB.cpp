@@ -46,32 +46,23 @@ ApiDB::ApiDB(void)
 			std::vector<std::string> tokens = split(rawLine,";");
 			
 			if(tokens.size() >3){
-				APIFunction f;
+				FunctionInfo_t f;
 				f.DLLName = tokens.at(0);
 				f.ReturnType = tokens.at(1);
 				f.Name = tokens.at(2);
 
 				for (int j = 3;j<tokens.size()-1;j+=2)
 				{
-					APIArgument a;
+					ArgumentInfo_t a;
 					a.Type = tokens.at(j);
 					a.Name = tokens.at(j+1);
 					f.Arguments.push_back(a);
 				}
-
-
 				mInfo.push_back(f);
-
 				i++;
-			}
-			
-
-			
+			}		
 		}
-
-
-	}
-	
+	}	
 	_plugin_logprintf("[StaticAnalysis] loaded %i functions signatures from helpfile\n",i);
 	helpFile.close();
 }
@@ -84,25 +75,20 @@ ApiDB::~ApiDB(void)
 {
 }
 
-APIFunction ApiDB::find( std::string name )
+FunctionInfo_t ApiDB::find( std::string name )
 {
-	APIFunction f;
+	FunctionInfo_t f;
 	f.invalid = true;
 	
-
-	std::list<APIFunction>::iterator it = mInfo.begin();
-
+	std::list<FunctionInfo_t>::iterator it = mInfo.begin();
 	while(it!=mInfo.end()){
 		if(it->Name == name){
 			f = *it;
 			f.invalid = false;
 			break;
 		}
-		
 		it++;
 	}
-
-
 
 	return f;
 }

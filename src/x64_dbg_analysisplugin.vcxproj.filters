@@ -42,6 +42,12 @@
     <ClCompile Include="internal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="S_IntermodularCallsX64.cpp">
+      <Filter>Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="StackEmulator.cpp">
+      <Filter>Analysis</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pluginmain.h">
@@ -85,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="internal.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="S_IntermodularCallsX64.h">
+      <Filter>Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="StackEmulator.h">
+      <Filter>Analysis</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

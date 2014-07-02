@@ -91,7 +91,7 @@ APIFunction ApiDB::find( std::string name )
 	APIFunction f;
 	f.invalid = true;
 	
-	_plugin_logprintf("[StaticAnalysis:IntermodularCalls] search data %s \n",name.c_str() );
+	//_plugin_logprintf("[StaticAnalysis:IntermodularCalls] search data %s \n",name.c_str() );
 	std::list<APIFunction>::iterator it = mInfo.begin();
 
 	while(it!=mInfo.end()){

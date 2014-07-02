@@ -87,7 +87,7 @@ bool S_IntermodularCalls::think()
 				// yeah we know everything about the api-call!
 				std::string functionComment;
 				functionComment = f.ReturnType + " " + f.Name + "(...)";
-				DbgSetCommentAt(c->RVA ,functionComment.c_str());
+				DbgSetAutoCommentAt(c->RVA ,functionComment.c_str());
 				//_plugin_logprintf("[StaticAnalysis:IntermodularCalls] found %s at %X\n",functionComment , c->RVA);
 				int pos=0;
 				// set comments for the arguments
@@ -99,7 +99,7 @@ bool S_IntermodularCalls::think()
 							break;
 
 						std::string ArgComment = f.arg(pos).Type + " "+ f.arg(pos).Name;
-						DbgSetCommentAt((*a) ,ArgComment.c_str());
+						DbgSetAutoCommentAt((*a) ,ArgComment.c_str());
 						pos++;
 					}
 				}

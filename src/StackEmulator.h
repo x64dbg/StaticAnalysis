@@ -14,6 +14,8 @@
 
 const unsigned int MAX_STACKSIZE = 50;
 
+#define STACK_ERROR -1
+
 class StackEmulator
 {
 	
@@ -28,11 +30,12 @@ public:
 	
 	void pushFrom(duint addr);
 	void popFrom(duint addr);
-	void modifyFrom(int relative_offset,duint addr);
+	void modifyFrom(int relative_offset, duint addr);
 
-	void moveStackpointer(int offset);
-	unsigned int pointerByOffset(int offset);
-	duint lastAccessAt(int offset);
+	void moveStackpointerBack(int offset);
+	unsigned int pointerByOffset(int offset) const;
+	duint lastAccessAtOffset(int offset) const;
 
+	void emulate(const DISASM* disasm);
 };
 

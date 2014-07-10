@@ -7,12 +7,8 @@
 #include "pluginmain.h"
 #include "pluginsdk/BeaEngine.h"
 
+#include "S_IntermodularCalls.h"
 
-#ifdef _WIN64
-throw std::exception("The method or operation is not implemented.");
-#else
-#include "S_IntermodularCallsX86.h"
-#endif // _WIN64
 
 
 #include "ApiDB.h"
@@ -26,31 +22,37 @@ class AnalysisRunner
 	S_IntermodularCalls *_Calls;
 	ApiDB *mApiDb;
 
+
 	unsigned char* mCodeMemory;
 	UIntPtr currentEIP;
 	UInt64 currentVirtualAddr;
 
+protected:
+	// forwarding
+	void see(const Instruction_t *disasm, const  StackEmulator *stack, const RegisterEmulator* regState);
+	void clear();
+	void think();
+	void initialise();
+	void unknownOpCode(const DISASM *disasm);
+
+private:
+	void run();
+	void publishInstructions();
+
 public:
 
-	ApiDB* db();
-
-	void setDB(ApiDB *api);
-
+	ApiDB* FunctionInformation() const;
+	void setFunctionInformation(ApiDB *api);
 
 	AnalysisRunner(duint BaseAddress,duint Size);
 	~AnalysisRunner(void);
-
-	void run();
-	void see(const DISASM *disasm);
-	void unknownOpCode( const DISASM *disasm );
+	
 	void start();
-	void clear( );
-	void think( );
-	void initialise();
-	unsigned int disassembleInstruction(const duint bytesOffset, DISASM* disasm );
-	void emulateStack( DISASM* disasm );
-	void backup( DISASM* disasm, unsigned int len );
-	int instruction(UInt64 va, Instruction_t* instr) const
+	
 
+
+	int instruction(UInt64 va, Instruction_t* instr) const;
+
+	
 };
 

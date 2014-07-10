@@ -1,5 +1,5 @@
 #include "internal.h"
-#include "pluginsdk\TitanEngine\TitanEngine.h"
+#include "pluginsdk\TitanEngine\TitanEngine.hpp"
 #include <windows.h>
 #include <stdio.h>
 #include <psapi.h>
@@ -50,13 +50,12 @@ static bool cbRunAnalysis(){
 	duint BaseAddr = base + size;
 	
 	duint memSize=0;
-	HANDLE hProcess=((PROCESS_INFORMATION*)GetProcessInformation())->hProcess;
+	HANDLE hProcess=0;//=((PROCESS_INFORMATION*)GetProcessInformation())->hProcess;
 	memfindbaseaddr(hProcess,entry,&memSize);
 
-	
 
 	AnalysisRunner AR(BaseAddr,memSize);
-	AR.setDB(db);
+	AR.setFunctionInformation(db);
 	AR.start();
 	return true;
 }

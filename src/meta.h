@@ -3,19 +3,24 @@
  * license:  GLPv3
  */
 #pragma once
-
+#include "pluginsdk/BeaEngine.h"
 #include "pluginsdk/bridgemain.h"
 #include <vector>
 #include <string>
 #include <map>
 
+
 struct Instruction_t{
-	DISASM Instruction;
+	DISASM BeaStruct;
 	unsigned int Length;
 
-	Instruction_t(DISASM *dis,unsigned int len){
-		Instruction = *dis;
+	Instruction_t(DISASM *dis, unsigned int len){
+		BeaStruct = *dis;
 		Length = len;
+	}
+
+	Instruction_t(){
+		Length = UNKNOWN_OPCODE;
 	}
 };
 
@@ -54,11 +59,11 @@ struct FunctionInfo_t
 
 	bool operator==(const FunctionInfo_t& rhs) const
 	{
-		return stricmp(Name.c_str(), rhs.Name.c_str()) < 0;
+		return (bool)(stricmp(Name.c_str(), rhs.Name.c_str()) < 0);
 	}
 	bool operator<(const FunctionInfo_t& rhs) const
 	{
-		return stricmp(Name.c_str(), rhs.Name.c_str());
+		return (bool)stricmp(Name.c_str(), rhs.Name.c_str());
 	}
 
 	ArgumentInfo_t arg(int i){

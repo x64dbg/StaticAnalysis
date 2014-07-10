@@ -1,7 +1,7 @@
 /* plugin:   (StaticAnalysis) for x64dbg <http://www.x64dbg.com>
-* author:   tr4ceflow@gmail.com <http://blog.traceflow.com>
-* license:  GLPv3
-*/
+ * author:   tr4ceflow@gmail.com <http://blog.traceflow.com>
+ * license:  GLPv3
+ */
 #pragma once
 #include "ICommand.h"
 #include <list>

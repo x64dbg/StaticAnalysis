@@ -16,7 +16,3 @@ void ICommand::initialise( const duint Base,const duint Size )
 	mSize = Size;
 }
 
-unsigned int ICommand::getInstruction( const duint bytesOffset, DISASM* disasm )
-{
-	return mParent->disassembleInstruction(bytesOffset,disasm);
-}

@@ -4,12 +4,16 @@
  */
 #include "StackEmulator.h"
 
+#define _isPush(disasm)  ((strcmp((disasm)->Instruction.Mnemonic ,"push ") == 0) )
+#define _isPop(disasm)  ((strcmp((disasm)->Instruction.Mnemonic ,"pop ") == 0) )
+#define _isSub(disasm)  ((strcmp((disasm)->Instruction.Mnemonic ,"sub ") == 0) )
+#define _isAdd(disasm)  ((strcmp((disasm)->Instruction.Mnemonic ,"add ") == 0) )
 
 
 StackEmulator::StackEmulator( void) : mStackpointer(0)
 {
 	for (unsigned int i=0;i<MAX_STACKSIZE;i++)
-		mStack[i]=0;
+		mStack[i]=STACK_ERROR;
 }
 
 
@@ -21,7 +25,7 @@ StackEmulator::~StackEmulator(void)
  0x01234: mov [esp+C], eax
  --> modifyFrom(0xC,0x01234)
 */
-void StackEmulator::modifyFrom(int relative_offset,duint addr){
+void StackEmulator::modifyFrom(int relative_offset, duint addr){
 	const unsigned int internal_pointer = pointerByOffset(-1*relative_offset);
 	mStack[internal_pointer] = addr;
 }
@@ -35,7 +39,7 @@ void StackEmulator::modifyFrom(int relative_offset,duint addr){
 */
 void StackEmulator::popFrom( duint addr )
 {
-	moveStackpointer(+1);
+	moveStackpointerBack(+1);
 }
 /*
  0x01234: push eax
@@ -47,7 +51,7 @@ void StackEmulator::popFrom( duint addr )
 void StackEmulator::pushFrom( duint addr )
 {
 	mStack[mStackpointer] = addr;
-	moveStackpointer(-1);
+	moveStackpointerBack(-1);
 }
 /*
  0x01234: add esp, 0xA
@@ -55,12 +59,12 @@ void StackEmulator::pushFrom( duint addr )
 
  offset = offset to the past
 */
-void StackEmulator::moveStackpointer( int offset )
+void StackEmulator::moveStackpointerBack( int offset )
 {
 	mStackpointer = pointerByOffset(-offset);
 }
 
-unsigned int StackEmulator::pointerByOffset(int offset){
+unsigned int StackEmulator::pointerByOffset(int offset) const{
 	return (mStackpointer + ((offset+MAX_STACKSIZE) %MAX_STACKSIZE) + MAX_STACKSIZE) %MAX_STACKSIZE;
 }
 
@@ -71,8 +75,66 @@ unsigned int StackEmulator::pointerByOffset(int offset){
    lastAccessAt(0x8)  would be 0x155
 
 */
-duint StackEmulator::lastAccessAt(int offset){
+duint StackEmulator::lastAccessAtOffset(int offset) const{
 	int p = pointerByOffset(-offset);
 	return mStack[p];
 }
 
+
+
+void StackEmulator::emulate(const DISASM* BeaStruct)
+{
+	/* track all events:
+	- sub/add esp
+	- mov [esp+x], ???
+	- push/pop
+	*/
+	// 
+
+	const duint addr = BeaStruct->VirtualAddr;                    // --> 00401301
+
+	if (_isPush(BeaStruct)){
+		// "0x123  push eax" --> remember 0x123
+		pushFrom(addr);
+	}
+	else if (_isPop(BeaStruct))
+	{
+		// "0x125  pop ebp" --> remember 0x125
+		popFrom(addr);
+	}
+	else if (_isSub(BeaStruct)){
+
+		if ((strcmp(BeaStruct->Argument1.ArgMnemonic, "esp ") == 0)){
+			// "sub esp, ???"
+			moveStackpointerBack(BeaStruct->Instruction.Immediat / 4);
+		}
+
+	}
+	else if (_isAdd(BeaStruct)){
+
+		if ((strcmp(BeaStruct->Argument1.ArgMnemonic, "esp ") == 0)){
+			// "add esp, ???"
+			moveStackpointerBack(BeaStruct->Instruction.Immediat / -4);
+		}
+
+	}
+	else{
+		// "00401301: mov dword ptr ss:[esp+04h], 0040400Eh"
+		if ((BeaStruct->Argument1.AccessMode == WRITE)
+			&& (BeaStruct->Argument1.ArgType & MEMORY_TYPE)
+			&& (BeaStruct->Argument1.Memory.BaseRegister & REG4)
+			&& (BeaStruct->Argument1.SegmentReg & SSReg)
+			)  {
+			int offset = BeaStruct->Argument1.Memory.Displacement;  // --> 04h
+			duint addr = BeaStruct->VirtualAddr;                    // --> 00401301
+
+			modifyFrom(offset / 4, addr);
+
+
+
+		}
+	}
+
+
+
+}

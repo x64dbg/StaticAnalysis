@@ -15,6 +15,7 @@
     <ClCompile Include="ApiDB.cpp" />
     <ClCompile Include="ICommand.cpp" />
     <ClCompile Include="pluginmain.cpp" />
+    <ClCompile Include="RegisterEmulator.cpp" />
     <ClCompile Include="StackEmulator.cpp" />
     <ClCompile Include="S_IntermodularCallsX64.cpp" />
     <ClCompile Include="S_IntermodularCallsX86.cpp" />
@@ -30,12 +31,12 @@
     <ClInclude Include="pluginsdk\BeaEngine.h" />
     <ClInclude Include="pluginsdk\bridgemain.h" />
     <ClInclude Include="pluginsdk\macros.h" />
-    <ClInclude Include="pluginsdk\TitanEngine\TitanEngine.h" />
+    <ClInclude Include="pluginsdk\TitanEngine\TitanEngine.hpp" />
     <ClInclude Include="pluginsdk\_plugins.h" />
     <ClInclude Include="pluginsdk\_plugin_types.h" />
+    <ClInclude Include="RegisterEmulator.h" />
     <ClInclude Include="StackEmulator.h" />
-    <ClInclude Include="S_IntermodularCallsX64.h" />
-    <ClInclude Include="S_IntermodularCallsX86.h" />
+    <ClInclude Include="S_IntermodularCalls.h" />
     <ClInclude Include="internal.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

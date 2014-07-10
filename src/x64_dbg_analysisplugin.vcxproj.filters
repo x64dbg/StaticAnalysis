@@ -42,6 +42,15 @@
     <ClCompile Include="internal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="S_IntermodularCallsX64.cpp">
+      <Filter>Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="StackEmulator.cpp">
+      <Filter>Analysis</Filter>
+    </ClCompile>
+    <ClCompile Include="RegisterEmulator.cpp">
+      <Filter>Analysis</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pluginmain.h">
@@ -55,9 +64,6 @@
     </ClInclude>
     <ClInclude Include="pluginsdk\bridgemain.h">
       <Filter>Header Files\pluginsdk</Filter>
-    </ClInclude>
-    <ClInclude Include="pluginsdk\TitanEngine\TitanEngine.h">
-      <Filter>Header Files\pluginsdk\TitanEngine</Filter>
     </ClInclude>
     <ClInclude Include="AnalysisRunner.h">
       <Filter>Analysis</Filter>
@@ -74,9 +80,6 @@
     <ClInclude Include="ICommand.h">
       <Filter>Analysis</Filter>
     </ClInclude>
-    <ClInclude Include="S_IntermodularCallsX86.h">
-      <Filter>Analysis</Filter>
-    </ClInclude>
     <ClInclude Include="meta.h">
       <Filter>Analysis</Filter>
     </ClInclude>
@@ -85,6 +88,18 @@
     </ClInclude>
     <ClInclude Include="internal.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StackEmulator.h">
+      <Filter>Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="pluginsdk\TitanEngine\TitanEngine.hpp">
+      <Filter>Header Files\pluginsdk\TitanEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="S_IntermodularCalls.h">
+      <Filter>Analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisterEmulator.h">
+      <Filter>Analysis</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,7 +7,12 @@
 #include "pluginmain.h"
 #include "pluginsdk/BeaEngine.h"
 
+#include "meta.h"
+
 class AnalysisRunner;
+class StackEmulator;
+class RegisterEmulator;
+
 class ICommand
 {
 public:
@@ -26,8 +31,8 @@ public:
 	void initialise(const duint Base,const duint Size);
 	// clear all extracted informations
 	virtual void clear() = 0;
-	// each derived class will see each instruction only once (in a analysis step)
-	virtual void see(const DISASM* disasm) = 0;
+	// each sub-plugin will get a simulated flow (it gets an instruction and the state of the stack)
+	virtual void see(const Instruction_t* disasm, const StackEmulator *stack, const RegisterEmulator* regState) = 0;
 	// this methods process all gathered informations
 	virtual bool think() = 0;
 

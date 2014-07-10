@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -15,6 +15,9 @@
     <ClCompile Include="ApiDB.cpp" />
     <ClCompile Include="ICommand.cpp" />
     <ClCompile Include="pluginmain.cpp" />
+    <ClCompile Include="RegisterEmulator.cpp" />
+    <ClCompile Include="StackEmulator.cpp" />
+    <ClCompile Include="S_IntermodularCallsX64.cpp" />
     <ClCompile Include="S_IntermodularCallsX86.cpp" />
     <ClCompile Include="internal.cpp" />
   </ItemGroup>
@@ -28,24 +31,29 @@
     <ClInclude Include="pluginsdk\BeaEngine.h" />
     <ClInclude Include="pluginsdk\bridgemain.h" />
     <ClInclude Include="pluginsdk\macros.h" />
-    <ClInclude Include="pluginsdk\TitanEngine\TitanEngine.h" />
+    <ClInclude Include="pluginsdk\TitanEngine\TitanEngine.hpp" />
     <ClInclude Include="pluginsdk\_plugins.h" />
     <ClInclude Include="pluginsdk\_plugin_types.h" />
-    <ClInclude Include="S_IntermodularCallsX86.h" />
+    <ClInclude Include="RegisterEmulator.h" />
+    <ClInclude Include="StackEmulator.h" />
+    <ClInclude Include="S_IntermodularCalls.h" />
     <ClInclude Include="internal.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <Keyword>Win32Proj</Keyword>
     <ProjectName>x64_dbg_analysisplugin</ProjectName>
+    <ProjectGuid>{56EC1214-EF57-5BB5-8D3B-E74ED52F6386}</ProjectGuid>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">

@@ -15,9 +15,9 @@ public:
 
 	const bool ok() const;
 
-	APIFunction find(std::string name);
+	FunctionInfo_t find(std::string name);
 
-	std::list<APIFunction> mInfo;
+	std::list<FunctionInfo_t> mInfo;
 
 	
 };

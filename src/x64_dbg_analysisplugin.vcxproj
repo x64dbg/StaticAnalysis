@@ -38,6 +38,7 @@
     <ClInclude Include="StackEmulator.h" />
     <ClInclude Include="S_IntermodularCalls.h" />
     <ClInclude Include="internal.h" />
+    <ClInclude Include="TitanEngine.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <Keyword>Win32Proj</Keyword>

@@ -12,7 +12,7 @@
 
 
 S_IntermodularCalls::S_IntermodularCalls(AnalysisRunner *parent) : ICommand(parent){
-
+	throw std::exception("do NOT use the x64 version of this source. It is work in progress!");
 }
 
 void S_IntermodularCalls::clear()
@@ -64,15 +64,15 @@ void S_IntermodularCalls::see(const  Instruction_t* currentInstruction, const St
 						}
 						if (f.Arguments.size() > 1){
 							std::string ArgComment = f.arg(1).Type + " " + f.arg(1).Name;
-							DbgSetAutoCommentAt(regState->rcx(), ArgComment.c_str());
+							DbgSetAutoCommentAt(regState->rdx(), ArgComment.c_str());
 						}
 						if (f.Arguments.size() > 2){
 							std::string ArgComment = f.arg(2).Type + " " + f.arg(2).Name;
-							DbgSetAutoCommentAt(regState->rcx(), ArgComment.c_str());
+							DbgSetAutoCommentAt(regState->r8(), ArgComment.c_str());
 						}
 						if (f.Arguments.size() > 3){
 							std::string ArgComment = f.arg(3).Type + " " + f.arg(3).Name;
-							DbgSetAutoCommentAt(regState->rcx(), ArgComment.c_str());
+							DbgSetAutoCommentAt(regState->r9(), ArgComment.c_str());
 						}
 						if (f.Arguments.size() > 4){
 							// set comments for the arguments

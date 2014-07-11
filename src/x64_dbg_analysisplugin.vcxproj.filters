@@ -101,5 +101,8 @@
     <ClInclude Include="RegisterEmulator.h">
       <Filter>Analysis</Filter>
     </ClInclude>
+    <ClInclude Include="TitanEngine.h">
+      <Filter>Header Files\pluginsdk\TitanEngine</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

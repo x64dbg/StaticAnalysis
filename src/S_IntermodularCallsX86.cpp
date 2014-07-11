@@ -31,7 +31,6 @@ void S_IntermodularCalls::see(const  Instruction_t* currentInstruction, const St
 	if ((currentInstruction->BeaStruct.Instruction.Opcode != 0xFF) && (_isCall(currentInstruction->BeaStruct))){
 		// current instructions contains a call
 		// extract from "call 0x123" --> instruction at 0x123
-
 		Instruction_t callTarget;
 		int len = mParent->instruction(currentInstruction->BeaStruct.Instruction.AddrValue, &callTarget);
 		if (len != UNKNOWN_OPCODE){

@@ -10,6 +10,8 @@
 #define _isAdd(disasm)  ((strcmp((disasm)->Instruction.Mnemonic ,"add ") == 0) )
 
 
+
+
 StackEmulator::StackEmulator( void) : mStackpointer(0)
 {
 	for (unsigned int i=0;i<MAX_STACKSIZE;i++)
@@ -106,7 +108,7 @@ void StackEmulator::emulate(const DISASM* BeaStruct)
 
 		if ((strcmp(BeaStruct->Argument1.ArgMnemonic, "esp ") == 0)){
 			// "sub esp, ???"
-			moveStackpointerBack(BeaStruct->Instruction.Immediat / 4);
+			moveStackpointerBack(BeaStruct->Instruction.Immediat / REGISTER_SIZE);
 		}
 
 	}
@@ -114,7 +116,7 @@ void StackEmulator::emulate(const DISASM* BeaStruct)
 
 		if ((strcmp(BeaStruct->Argument1.ArgMnemonic, "esp ") == 0)){
 			// "add esp, ???"
-			moveStackpointerBack(BeaStruct->Instruction.Immediat / -4);
+			moveStackpointerBack(BeaStruct->Instruction.Immediat / -REGISTER_SIZE);
 		}
 
 	}
@@ -128,7 +130,7 @@ void StackEmulator::emulate(const DISASM* BeaStruct)
 			int offset = BeaStruct->Argument1.Memory.Displacement;  // --> 04h
 			duint addr = BeaStruct->VirtualAddr;                    // --> 00401301
 
-			modifyFrom(offset / 4, addr);
+			modifyFrom(offset / REGISTER_SIZE, addr);
 
 
 

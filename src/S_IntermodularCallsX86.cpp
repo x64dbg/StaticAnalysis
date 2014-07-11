@@ -8,10 +8,6 @@
 #include "S_IntermodularCalls.h"
 #include "AnalysisRunner.h"
 
-
-/*#define _isPush(disasm)  (QString(disasm->Instruction.Mnemonic).trimmed().toLower() == "push")
-#define _isCall(disasm)  ((disasm->Instruction.BranchType == CallType)  && !(disasm->Argument1.ArgType &REGISTER_TYPE))))*/
-
 #define _isCall(disasm)  ((disasm.Instruction.Opcode == 0xE8) && (disasm.Instruction.BranchType) && (disasm.Instruction.BranchType!=RetType) && !(disasm.Argument1.ArgType &REGISTER_TYPE))
 
 
@@ -52,7 +48,7 @@ void S_IntermodularCalls::see(const  Instruction_t* currentInstruction, const St
 						// yeah we know everything about the dll-call!
 						std::string functionComment;
 						functionComment = f.ReturnType + " " + f.Name + "(...)";
-						DbgSetCommentAt(currentInstruction->BeaStruct.VirtualAddr, functionComment.c_str());
+						DbgSetAutoCommentAt(currentInstruction->BeaStruct.VirtualAddr, functionComment.c_str());
 
 
 						// set comments for the arguments

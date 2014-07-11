@@ -9,8 +9,6 @@
 
 #include "S_IntermodularCalls.h"
 
-
-
 #include "ApiDB.h"
 
 class AnalysisRunner

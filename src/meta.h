@@ -81,3 +81,9 @@ namespace std{
 		return (it != s.end());
 	}
 }
+
+#ifdef _WIN64
+#define REGISTER_SIZE 8
+#else
+#define REGISTER_SIZE 4
+#endif

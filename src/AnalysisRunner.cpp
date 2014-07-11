@@ -72,8 +72,9 @@ void AnalysisRunner::run()
 	duint size = mSize;
 
 	memset(&disasm, 0, sizeof(disasm));
+
 #ifdef _WIN64
-	disasm.Archi=64;
+	disasm.Archi = 64;
 #endif // _WIN64
 
 	currentEIP = (UIntPtr)mCodeMemory;

@@ -50,8 +50,8 @@ void StackEmulator::popFrom( duint addr )
 */
 void StackEmulator::pushFrom( duint addr )
 {
-	mStack[mStackpointer] = addr;
 	moveStackpointerBack(-1);
+	mStack[mStackpointer] = addr;
 }
 /*
  0x01234: add esp, 0xA

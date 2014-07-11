@@ -1,17 +1,22 @@
 x64dbg-StaticAnalysis
 =====================
 
-- plugin for x64_dbg
-- see [release page](https://github.com/x64dbg/x64dbg-StaticAnalysis/releases) for a working plugin
-- see stable branch for stable code
-- this master branch contains experimental code
+This is a plugin for the project x64_dbg. It detect win32api calls and add useful comments at found parameters for easier analysis.
+Currently it supports x86 targets only. 
 
-##Roadmap
-see [dev branch](https://github.com/x64dbg/x64dbg-StaticAnalysis/tree/enhance)
+See [release page](https://github.com/x64dbg/x64dbg-StaticAnalysis/release) for lastest compiled plugin. The source of the latest release is in the branch "stable".
 
-- x64 calling convention (x64 version)
-- Stackemulator (for MingGM-argument-passing)
-- function-finder
+This master branch may contains experimental code and the latest commits.
+
+## implemented Features
+- auto comments on parameters for api-function
+- real stack emulator for MinGW-arguments detection
+- real register emulator for x64 calling convention
+
+## Roadmap
+
+- version for x64 targets
+- function-finder (function body, xrefs, function returns)
 - case-switch detection
 - "MB_OK"-like symbols
 - loop-detection

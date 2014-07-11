@@ -33,7 +33,7 @@ duint memfindbaseaddr(HANDLE hProcess, duint addr, duint* size)
 }
 
 static bool cbRunAnalysis(){
-	duint entry = GetContextData(UE_CIP);
+	duint entry = TE::UE::GetContextData(TE::UE::UE_CIP);
 	char mod[MAX_MODULE_SIZE]="";
 	if(!DbgGetModuleAt(entry, mod))
 	{
@@ -48,9 +48,8 @@ static bool cbRunAnalysis(){
 	}
 	duint size = DbgMemGetPageSize(base);
 	duint BaseAddr = base + size;
-	
 	duint memSize=0;
-	HANDLE hProcess=0;//=((PROCESS_INFORMATION*)GetProcessInformation())->hProcess;
+	HANDLE hProcess = ((PROCESS_INFORMATION*)TE::UE::GetProcessInformation())->hProcess;
 	memfindbaseaddr(hProcess,entry,&memSize);
 
 

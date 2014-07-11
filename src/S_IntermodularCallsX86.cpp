@@ -31,17 +31,22 @@ void S_IntermodularCalls::see(const  Instruction_t* currentInstruction, const St
 	if ((currentInstruction->BeaStruct.Instruction.Opcode != 0xFF) && (_isCall(currentInstruction->BeaStruct))){
 		// current instructions contains a call
 		// extract from "call 0x123" --> instruction at 0x123
+		_plugin_logprintf("[StaticAnalysis:IntermodularCalls] possible call at %x\n", currentInstruction->BeaStruct.VirtualAddr);
 		Instruction_t callTarget;
-		if (mParent->instruction(currentInstruction->BeaStruct.VirtualAddr, &callTarget) != UNKNOWN_OPCODE){
+		int len = mParent->instruction(currentInstruction->BeaStruct.Instruction.AddrValue, &callTarget);
+		if (len != UNKNOWN_OPCODE){
 			// call target was correctly disassembled before
 			if (callTarget.BeaStruct.Instruction.Opcode == 0xFF)
 			{
+				
 				// the opcode 0xFF "jmp" tells us that the current call is a call to a dll-function
 				numberOfApiCalls++;
 				numberOfCalls++;
 				// does the TitanEngine provides us a label?
 				char labelText[MAX_LABEL_SIZE];
-				if (DbgGetLabelAt(currentInstruction->BeaStruct.Argument1.Memory.Displacement, SEG_DEFAULT, labelText)){
+				bool hasLabel = DbgGetLabelAt(callTarget.BeaStruct.Argument1.Memory.Displacement, SEG_DEFAULT, labelText);
+				if (hasLabel){
+					_plugin_logprintf("[StaticAnalysis:IntermodularCalls] have label %s\n", labelText);
 					// we have a label from TitanEngine --> look up function header in database
 					FunctionInfo_t f = mParent->FunctionInformation()->find(labelText);
 					if (!f.invalid){
@@ -49,11 +54,16 @@ void S_IntermodularCalls::see(const  Instruction_t* currentInstruction, const St
 						std::string functionComment;
 						functionComment = f.ReturnType + " " + f.Name + "(...)";
 						DbgSetCommentAt(currentInstruction->BeaStruct.VirtualAddr, functionComment.c_str());
+
+						_plugin_logprintf("[StaticAnalysis:IntermodularCalls] stackdump 0: %x\n", stackState->lastAccessAtOffset(0));
+						_plugin_logprintf("[StaticAnalysis:IntermodularCalls] stackdump 1: %x\n", stackState->lastAccessAtOffset(1));
+						_plugin_logprintf("[StaticAnalysis:IntermodularCalls] stackdump 2: %x\n", stackState->lastAccessAtOffset(2));
+
 						// set comments for the arguments
 						for (auto i = 0; i < f.Arguments.size(); i++)
 						{
 							std::string ArgComment = f.arg(i).Type + " " + f.arg(i).Name;
-							duint commentAddr = stackState->lastAccessAtOffset(i);
+							duint commentAddr = stackState->lastAccessAtOffset(f.Arguments.size()-i-1);
 							if (commentAddr != STACK_ERROR){
 								DbgSetAutoCommentAt(commentAddr, ArgComment.c_str());
 							}

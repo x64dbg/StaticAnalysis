@@ -1,6 +1,9 @@
 x64dbg-StaticAnalysis
 =====================
 
+
+#due a bug in BeaEngine some "r8" register modifications are not recognized
+
 This is a plugin for the project x64_dbg. It detect win32api calls and add useful comments at found parameters for easier analysis. It supports **x86 and x64**.
 
 

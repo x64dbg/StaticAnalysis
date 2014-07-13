@@ -1,23 +1,25 @@
 x64dbg-StaticAnalysis
 =====================
-
-
-#due a bug in BeaEngine some "r8" register modifications are not recognized
-
 This is a plugin for the project x64_dbg. It detect win32api calls and add useful comments at found parameters for easier analysis. It supports **x86 and x64**.
-
+The plugin delivers a comprehensive list (3304 descriptions of functions) of function prototypes. *These were crafted by hand and RegEx, so please respect the credits and license.
 
 ### x86 and x64
+It fully supports the x64 calling convention:
 ![default x86 calling](https://raw.githubusercontent.com/x64dbg/x64dbg-StaticAnalysis/master/x64.PNG)
+
+It even detects different argument order. Notice that the prototype is
+
+   int GetModuleFileNameW(DWORD nBufferSize,LPTSTR lpBuffer,HMODULE hModule)
+
+but the plugin recognize the order of the arguments
 ![default x86 calling](https://raw.githubusercontent.com/x64dbg/x64dbg-StaticAnalysis/master/x64_2.PNG)
+Hence it knows, that in this case the argument order changed.
 
 
 ### advanced parameter detection (MinGW)
 
 ![default x86 calling](https://raw.githubusercontent.com/x64dbg/x64dbg-StaticAnalysis/master/analysis2.PNG)
-
-due some stack emulation it is possible to analyse MingGW parameter passing to the stack
-
+Due some stack emulation it is possible to analyse MingGW parameter passing to the stack
 ![MingGW parameters](https://raw.githubusercontent.com/x64dbg/x64dbg-StaticAnalysis/master/analysis.PNG)
 
 ## Download
